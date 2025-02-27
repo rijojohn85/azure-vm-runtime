@@ -1,7 +1,7 @@
 from typing import Dict, List
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 import os
-from azure.identity import DefaultAzureCredential
+from azure.identity import ManagedIdentityCredential
 from azure.mgmt.compute import ComputeManagementClient
 from src.log_vm_report import log_vm_report
 
@@ -14,7 +14,7 @@ def get_all_vms()->Dict[str,str]:
     sub_id = os.environ.get("AZURE_SUBSCRIPTION_ID")
     if not sub_id:
         raise ValueError("Set AZURE_SUBSCRIPTION_ID environment variable")
-    credential = DefaultAzureCredential()
+    credential = ManagedIdentityCredential()
     compute_client = ComputeManagementClient(credential, sub_id)
     vms = compute_client.virtual_machines.list_all()
     vm_dict = {}
@@ -30,6 +30,17 @@ def get_all_vms()->Dict[str,str]:
 
     return vm_dict
 
+def filter_vms_by_runtime(vm_dict: Dict[str, Dict[str, str]], threshold: timedelta) -> Dict[str, Dict[str, str]]:
+    """
+    Filter VMs by running time
+    Args:
+    vm_dict(Dict[str, Dict[str, str]]): A dictionary where keys are VMs and values are dictionaries containing resource group, status and running time
+    Returns:
+    Dict[str, Dict[str, str]]: A dictionary where keys are VMs and values are dictionaries containing resource group, status and running time
+    """
+    return {vm: vm_info for vm, vm_info in vm_dict.items() if vm_info["running_time"] > threshold}
+
 if __name__ == "__main__":
     vm_dict = get_all_vms()
+    filtered_vms = filter_vms_by_runtime(vm_dict, timedelta(hours=24))
     log_vm_report(vm_dict)
