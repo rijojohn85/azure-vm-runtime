@@ -46,10 +46,11 @@ async def send_report_to_slack(vm_dict: Dict[str, Dict[str,str]])-> None:
 
     async with aiohttp.ClientSession() as session:
         try:
-            async with session.post(slack_webhook_url, json=payload) as response:
-                if response.status == 200:
-                    logging.info("Report sent to slack successfully")
-                else:
-                    logging.error(f"Error sending report to slack, status code: {response.status}")
+            response = await session.post(slack_webhook_url, json=payload)
+            # with session.post(slack_webhook_url, json=payload) as response:
+            if response.status == 200:
+                logging.info("Report sent to slack successfully")
+            else:
+                logging.error(f"Error sending report to slack, status code: {response.status}")
         except Exception as e:
             logging.error(f"Error sending report to slack: {str(e)}")
