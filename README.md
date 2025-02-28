@@ -39,6 +39,6 @@ The threshold and running interval can be set through the environmental variable
 1. `SCHEDULE` = "0 0 6 * * *" currently set to run at 6AM daily. Can be configured similariy to a cronjob. [Refernce](https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-timer?tabs=python-v2%2Cisolated-process%2Cnodejs-v4&pivots=programming-language-python#ncrontab-examples)
 2. `THRESHOLD_HOURS` = 0 currently set to report all running VMs, can be configured.
 
-The report to sent to a private slack channel, this can be configured through environment variables by providing the appropriate slack web hook url. env name: SLACK_WEBHOOK_URL
+3. The report to sent to a private slack channel, this can be configured through environment variables by providing the appropriate slack web hook url. env name: SLACK_WEBHOOK_URL
 
-Currently, the app can be accessed at [#azure-vm-runtime](https://infracloud.slack.com/archives/C08F83DJH54)
+Currently, the report can be accessed at [#azure-vm-runtime](https://infracloud.slack.com/archives/C08F83DJH54)
