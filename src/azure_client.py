@@ -1,7 +1,7 @@
 from typing import Dict, List
 from datetime import datetime, timezone, timedelta
 import os
-from azure.identity import ManagedIdentityCredential
+from azure.identity import ManagedIdentityCredential, DefaultAzureCredential
 from azure.mgmt.compute import ComputeManagementClient
 from src.log_vm_report import log_vm_report
 
@@ -14,7 +14,10 @@ def get_all_vms()->Dict[str,str]:
     sub_id = os.environ.get("AZURE_SUBSCRIPTION_ID")
     if not sub_id:
         raise ValueError("Set AZURE_SUBSCRIPTION_ID environment variable")
-    credential = ManagedIdentityCredential()
+    if os.environ.get("AZURE_USE_MANAGED_IDENTITY", "false").lower() == "true":
+        credential = ManagedIdentityCredential()
+    else:
+        credential = DefaultAzureCredential()
     compute_client = ComputeManagementClient(credential, sub_id)
     vms = compute_client.virtual_machines.list_all()
     vm_dict = {}
